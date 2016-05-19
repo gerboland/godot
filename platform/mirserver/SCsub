@@ -1,0 +1,17 @@
+Import('env')
+
+
+common_mirserver=[\
+	"compositor.cpp",\
+    "mirserver.cpp",\
+	"context_gl_mirserver.cpp",\
+	"os_mirserver.cpp",\
+	"joystick_linux.cpp",\
+]
+
+# Need a custon environment to enable the C++11 flag
+cenv = env.Clone()
+cenv["CXXFLAGS"] = "-std=c++11"
+cenv_obj = cenv.Object(['godot_mirserver.cpp']+common_mirserver)
+
+env.Program('#bin/godot',cenv_obj)
