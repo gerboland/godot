@@ -117,7 +117,7 @@ def configure(env):
 
 		env.Append(CCFLAGS=['-g2', '-Wall','-DDEBUG_ENABLED','-DDEBUG_MEMORY_ENABLED'])
 
-	env.ParseConfig('pkg-config mirserver --cflags --libs')
+	env.ParseConfig('pkg-config mirserver mir-renderer-gl-dev --cflags --libs')
 	env.ParseConfig('pkg-config xcursor --cflags --libs')
 
 	if (env["openssl"]=="yes"):
@@ -166,7 +166,7 @@ def configure(env):
 			print("PulseAudio development libraries not found, disabling driver")
 
 	env.Append(CPPFLAGS=['-DMIRSERVER_ENABLED','-DUNIX_ENABLED','-DGLES2_ENABLED','-DGLES_OVER_GL'])
-	env.Append(LIBS=['GL', 'GLU', 'pthread', 'z'])
+	env.Append(LIBS=['GLESv2', 'pthread', 'z']) #'GLESv1_CM' maybe?
 	#env.Append(CPPFLAGS=['-DMPC_FIXED_POINT'])
 
 #host compiler is default..

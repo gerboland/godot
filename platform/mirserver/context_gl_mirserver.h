@@ -37,17 +37,15 @@
 
 #include "os/os.h"
 #include "drivers/gl_context/context_gl.h"
+#include <memory>
 
-struct ContextGL_MirServer_Private;
+namespace mir {
+    namespace graphics { class Display; class DisplaySyncGroup; }
+    namespace renderer { namespace gl { class RenderTarget; }}
+}
 
 class ContextGL_MirServer : public ContextGL {
 
-	ContextGL_MirServer_Private *p;
-	OS::VideoMode default_video_mode;
-	bool double_buffer;
-	bool direct_render;
-	int glx_minor,glx_major;
-	bool opengl_3_context;
 public:
 
 	virtual void release_current();
@@ -58,9 +56,13 @@ public:
 
 	virtual Error initialize();
 
-	ContextGL_MirServer(const OS::VideoMode& p_default_video_mode,bool p_opengl_3_context);
+	ContextGL_MirServer(const std::shared_ptr<mir::graphics::Display> &display);
 	~ContextGL_MirServer();
 
+private:
+	int width, height;
+	mir::renderer::gl::RenderTarget *renderTarget;
+    mir::graphics::DisplaySyncGroup *displayGroup;
 };
 
 #endif

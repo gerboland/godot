@@ -85,7 +85,7 @@ void OS_MirServer::initialize(const VideoMode& p_desired,int p_video_driver,int 
 	//print_line("def videomode "+itos(current_videomode.width)+","+itos(current_videomode.height));
 #if defined(OPENGL_ENABLED) || defined(LEGACYGL_ENABLED)
 
-	context_gl = memnew( ContextGL_MirServer(current_videomode, false ) );
+	context_gl = memnew( ContextGL_MirServer(mir_server->the_display()) );
 	context_gl->initialize();
 
 	rasterizer = memnew( RasterizerGLES2 );
@@ -381,7 +381,8 @@ void OS_MirServer::set_context(int p_context) {
 
 }
 
-OS_MirServer::OS_MirServer() {
+OS_MirServer::OS_MirServer(MirServer *server) 
+    : mir_server(server) {
 
 #ifdef RTAUDIO_ENABLED
 	AudioDriverManagerSW::add_driver(&driver_rtaudio);

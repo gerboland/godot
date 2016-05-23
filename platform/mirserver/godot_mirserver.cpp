@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     started_cv.wait_for(lock, std::chrono::seconds{10}, [&]{ return started; });
 
 	// Mir server has started in its own thread, now can start up Godot
-    OS_MirServer os;
+    OS_MirServer os(&server);
 
 	Error err = Main::setup(argv[0],argc-1,&argv[1]);
 	if (err!=OK) {

@@ -34,20 +34,26 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-struct ContextGL_MirServer_Private {
+// Mir
+#include "mir/geometry/size.h"
+#include "mir/graphics/buffer.h"
+#include "mir/graphics/display.h"
+#include "mir/graphics/display_buffer.h"
+#include "mir/graphics/display_configuration.h"
+#include "mir/renderer/gl/render_target.h"
 
-};
 
 void ContextGL_MirServer::release_current() {
-
+    renderTarget->release_current();
 }
 
 void ContextGL_MirServer::make_current() {
-
+    renderTarget->make_current();
 }
 
 void ContextGL_MirServer::swap_buffers() {
-
+    renderTarget->swap_buffers();
+    displayGroup->post();
 }
 
 /*
@@ -64,37 +70,46 @@ static GLWrapperFuncPtr wrapper_get_proc_address(const char* p_function) {
 }*/
 
 Error ContextGL_MirServer::initialize() {
-
-
+	make_current();
 	return OK;
 }
 
 int ContextGL_MirServer::get_window_width() {
-	return 800;
+	return width;
 }
 
 int ContextGL_MirServer::get_window_height() {
-	return 600;
+	return height;
 }
 
 
-ContextGL_MirServer::ContextGL_MirServer(const OS::VideoMode& p_default_video_mode,bool p_opengl_3_context) {
+ContextGL_MirServer::ContextGL_MirServer(const std::shared_ptr<mir::graphics::Display> &display) {
 
-	default_video_mode=p_default_video_mode;
+    auto displayConfig = display->configuration();
 
-	opengl_3_context=p_opengl_3_context;
+    displayConfig->for_each_output(
+    [this](const mir::graphics::DisplayConfigurationOutput &output) {
+        if (output.used && output.connected) {
+        	// There should be only 1 screen connected
 
-	double_buffer=false;
-	direct_render=false;
-	glx_minor=glx_major=0;
-	p = memnew( ContextGL_MirServer_Private );
-//	p->glx_context=0;
+        	mir::graphics::DisplayConfigurationMode mode = output.modes.at(output.current_mode_index);
+    		width = mode.size.width.as_int();
+   			height = mode.size.height.as_int();
+        }
+    });
+
+    display->for_each_display_sync_group([&](mir::graphics::DisplaySyncGroup &group) {
+    	group.for_each_display_buffer([&](mir::graphics::DisplayBuffer &displayBuffer) {
+    		renderTarget = dynamic_cast<mir::renderer::gl::RenderTarget*>(
+            					displayBuffer.native_display_buffer());
+    		displayGroup = &group;
+    	});
+    });
 }
 
 
 ContextGL_MirServer::~ContextGL_MirServer() {
 
-	memdelete( p );
 }
 
 

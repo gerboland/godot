@@ -58,6 +58,7 @@
 
 class OS_MirServer : public OS_Unix {
 
+    MirServer *mir_server;
 #if defined(OPENGL_ENABLED) || defined(LEGACYGL_ENABLED)
 	ContextGL_MirServer *context_gl;
 #endif
@@ -156,7 +157,7 @@ public:
 
 	void run();
 
-	OS_MirServer();
+	OS_MirServer(MirServer *server);
 };
 
 #endif
