@@ -40,3 +40,8 @@ void Compositor::stop()
 {
     m_running = false;
 }
+
+bool Compositor::running() const
+{
+    return m_running;
+}

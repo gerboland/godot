@@ -5,6 +5,7 @@ common_mirserver=[\
 	"compositor.cpp",\
 	"mirserver.cpp",\
 	"context_gl_mirserver.cpp",\
+	"windowmanager.cpp",\
 	"os_mirserver.cpp",\
 	"joystick_linux.cpp",\
 ]

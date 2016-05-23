@@ -1,11 +1,11 @@
 /*************************************************************************/
-/*  OS_MirServer.cpp                                                           */
+/*  OS_MirServer.cpp                                                     */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
 /*                    http://www.godotengine.org                         */
 /*************************************************************************/
-/* Copyright (c) 2007-2016 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2016 Gerry Boland                                       */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -29,10 +29,12 @@
 #include "servers/visual/visual_server_raster.h"
 #include "drivers/gles2/rasterizer_gles2.h"
 #include "os_mirserver.h"
+#include "compositor.h"
 #include "key_mapping_mirserver.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <memory>
 #include "print_string.h"
 #include "servers/physics/physics_server_sw.h"
 #include "errno.h"
@@ -61,7 +63,7 @@ const char * OS_MirServer::get_video_driver_name(int p_driver) const {
 }
 
 OS::VideoMode OS_MirServer::get_default_video_mode() const {
-	return OS::VideoMode(1024,600,false);
+	return OS::VideoMode(1024, 800, false); // FIXME: called before we've asked Mir
 }
 
 int OS_MirServer::get_audio_driver_count() const {
@@ -81,8 +83,6 @@ void OS_MirServer::initialize(const VideoMode& p_desired,int p_video_driver,int 
 	current_videomode=p_desired;
 	main_loop=NULL;
 	
-	// maybe contextgl wants to be in charge of creating the window
-	//print_line("def videomode "+itos(current_videomode.width)+","+itos(current_videomode.height));
 #if defined(OPENGL_ENABLED) || defined(LEGACYGL_ENABLED)
 
 	context_gl = memnew( ContextGL_MirServer(mir_server->the_display()) );
@@ -223,7 +223,7 @@ void OS_MirServer::set_cursor_shape(CursorShape p)
 }
 
 Size2 OS_MirServer::get_window_size() const {
-	return Size2(800,600); //Do this!
+	return Size2(context_gl->get_window_width(),context_gl->get_window_height());
 }
 
 MainLoop *OS_MirServer::get_main_loop() const {
@@ -246,7 +246,7 @@ void OS_MirServer::set_main_loop( MainLoop * p_main_loop ) {
 
 bool OS_MirServer::can_draw() const {
 
-	return true; // should base on Comp state
+	return std::static_pointer_cast<Compositor>(mir_server->the_compositor())->running();
 };
 
 
