@@ -77,10 +77,10 @@ const char *OS_MirServer::get_audio_driver_name(int p_driver) const {
     return AudioDriverManagerSW::get_driver(p_driver)->get_name();
 }
 
-void OS_MirServer::initialize(const VideoMode& p_desired,int p_video_driver,int p_audio_driver) {
+void OS_MirServer::initialize(MirServer *server,int p_audio_driver) {
 
 	args=OS::get_singleton()->get_cmdline_args();
-	current_videomode=p_desired;
+	mir_server = server;
 	main_loop=NULL;
 	
 #if defined(OPENGL_ENABLED) || defined(LEGACYGL_ENABLED)
@@ -381,8 +381,7 @@ void OS_MirServer::set_context(int p_context) {
 
 }
 
-OS_MirServer::OS_MirServer(MirServer *server) 
-    : mir_server(server) {
+OS_MirServer::OS_MirServer() {
 
 #ifdef RTAUDIO_ENABLED
 	AudioDriverManagerSW::add_driver(&driver_rtaudio);

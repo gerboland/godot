@@ -46,6 +46,7 @@ public:
     using mir::Server::the_compositor;
     using mir::Server::the_display;
     using mir::Server::the_gl_config;
+    using mir::Server::the_graphics_platform;
     using mir::Server::the_main_loop;
 
 private:

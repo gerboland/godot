@@ -70,7 +70,6 @@ static GLWrapperFuncPtr wrapper_get_proc_address(const char* p_function) {
 }*/
 
 Error ContextGL_MirServer::initialize() {
-	make_current();
 	return OK;
 }
 

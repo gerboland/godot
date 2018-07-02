@@ -64,7 +64,6 @@ class OS_MirServer : public OS_Unix {
 #endif
 	Rasterizer *rasterizer;
 	VisualServer *visual_server;
-	VideoMode current_videomode;
 	List<String> args;
 	MainLoop *main_loop;
 
@@ -157,7 +156,7 @@ public:
 
 	void run();
 
-	OS_MirServer(MirServer *server);
+	OS_MirServer();
 };
 
 #endif

@@ -38,6 +38,8 @@
 #include <thread>
 
 #include <mir/main_loop.h>
+#include <mir/graphics/display.h>
+#include <mir/graphics/gl_context.h>
 
 int main(int argc, char* argv[]) {
     MirServer server(argc, argv);
@@ -45,6 +47,15 @@ int main(int argc, char* argv[]) {
     std::mutex mutex;
     std::condition_variable started_cv;
     bool started{false};
+    auto const display = server.the_display();
+
+   	auto const temp_context = display->create_gl_context();
+   	Error err = Main::setup(argv[0],argc-1,&argv[1]);
+	if (err!=OK) {
+	//	server.stop();
+   	//	if (server_thread.joinable()) server_thread.join();
+		return 255;
+	}
 
     auto const ml = server.the_main_loop();
 
@@ -76,15 +87,9 @@ int main(int argc, char* argv[]) {
     std::unique_lock<std::mutex> lock(mutex);
     started_cv.wait_for(lock, std::chrono::seconds{10}, [&]{ return started; });
 
-	// Mir server has started in its own thread, now can start up Godot
+	// Mir server has started in its own thread, now can start up Godot. Godot needs
+	// an active GL context by now.
     OS_MirServer os(&server);
-
-	Error err = Main::setup(argv[0],argc-1,&argv[1]);
-	if (err!=OK) {
-		server.stop();
-    	if (server_thread.joinable()) server_thread.join();
-		return 255;
-	}
 
 	if (Main::start())
 		os.run(); // it is actually the OS that decides how to run

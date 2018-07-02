@@ -1,0 +1,6 @@
+To create export template:
+
+scons -j 4 p=mirserver target=release tools=no
+cp bin/godot.mirserver.opt.64 templates/linux_mirserver_64_release
+
+Then the UI will let you choose a Release template. Turn off debuging!
